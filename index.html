@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChopHouse | VIP Lounge & KTV Checker</title>
+    <link rel="stylesheet" href="styles.css?v=20260828-ops-export" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="#home" aria-label="ChopHouse home">
+          <img class="brand__logo" src="assets/chophouse-logo.jpg" alt="ChopHouse logo" />
+          <div>
+            <p class="brand__name">CHOP HOUSE</p>
+            <p class="brand__tag">RESTO BAR X CAFE</p>
+          </div>
+        </a>
+        <nav class="site-nav">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#status">VIP Lounges &amp; KTV</a>
+          <a href="#reservation">Reservation</a>
+          <a href="reservation-status.html">Check Status</a>
+          <a href="#contact">Contact</a>
+          <a class="site-nav__login" href="login.html">Login</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero section-card" id="home">
+          <div class="hero__backdrop"></div>
+          <div class="hero__content">
+            <span class="section-pill section-pill--sensor">IoT Reservation System</span>
+            <h1>Chop House Restobar x Cafe</h1>
+            <p class="hero__summary">
+              See real-time VIP lounge and KTV room availability, reserve in seconds, and enjoy your
+              night.
+            </p>
+            <div class="hero__actions">
+              <a class="button button--primary" href="#reservation">Make a Reservation</a>
+              <a class="button button--secondary" href="#status">View VIP Lounges &amp; KTV</a>
+              <a class="button button--secondary" href="reservation-status.html">Check Status</a>
+            </div>
+            <div class="hero__highlights">
+              <article class="feature-card">
+                <h2>Live Status</h2>
+                <p>VIP lounges and KTV rooms update automatically based on reservation and staff changes.</p>
+              </article>
+              <article class="feature-card">
+                <h2>Queue-Free Experience</h2>
+                <p>Reserve ahead and skip the waiting line at the door.</p>
+              </article>
+              <article class="feature-card">
+                <h2>Perfect for Groups</h2>
+                <p>Choose the ideal capacity and room type for your celebration.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card content-section" id="about">
+          <div class="section-copy">
+            <h2>About Us</h2>
+            <p>
+              Chop House Resto Bar X Cafe is a restaurant and bar that offers a relaxing place
+              where people can enjoy good food, drinks, and social gatherings. The establishment
+              serves a variety of grilled dishes, meals, and beverages, making it a popular spot
+              for friends, families, and groups who want to dine and unwind.
+            </p>
+          </div>
+          <div class="map-frame">
+            <iframe
+              title="ChopHouse map"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=Chop%20House%20Restaurant%20and%20Bar%20Pacita%20Laguna&output=embed"
+            ></iframe>
+          </div>
+        </section>
+
+        <section class="section-card status-section" id="status">
+          <div class="section-heading">
+            <div>
+              <h2>Live VIP Lounge &amp; KTV Status</h2>
+              <p>
+                Monitor which areas are free in real time. Cards update when reservations or staff
+                status changes are made.
+              </p>
+            </div>
+            <div class="legend">
+              <span class="legend__item legend__item--available">Available</span>
+              <span class="legend__item legend__item--occupied">Occupied</span>
+              <span class="legend__item legend__item--reserved">Reserved</span>
+              <span class="legend__item legend__item--standby">Standby</span>
+            </div>
+          </div>
+
+          <div class="status-group">
+            <div class="status-group__title">
+              <h3>VIP Lounges</h3>
+            </div>
+            <div class="grid" id="table-status-grid"></div>
+          </div>
+
+          <div class="status-group">
+            <div class="status-group__title">
+              <h3>KTV Rooms</h3>
+            </div>
+            <div class="grid" id="room-status-grid"></div>
+          </div>
+
+        </section>
+
+        <section class="section-card reservation-section" id="reservation">
+          <div class="section-copy">
+            <h2>Make a Reservation</h2>
+            <p>
+              Choose your preferred venue, date, and time. VIP lounges use one scheduled time,
+              while KTV rooms use both a start time and an end time. VIP lounges and KTV rooms marked
+              as occupied are blocked to avoid double booking.
+            </p>
+          </div>
+
+          <form class="reservation-form" id="reservation-form">
+            <input type="hidden" id="reservation-terms-accepted" name="termsAccepted" value="" />
+            <label>
+              Venue Type:
+              <div class="time-picker" id="venue-type-picker">
+                <input type="hidden" id="venue-type" name="venueType" required />
+                <button
+                  class="time-picker__trigger"
+                  id="venue-type-trigger"
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                >
+                  <span id="venue-type-label">Select Venue Type</span>
+                </button>
+                <div class="time-picker__menu" id="venue-type-menu" hidden>
+                  <div
+                    class="time-picker__options"
+                    id="venue-type-options"
+                    role="listbox"
+                    aria-label="Venue type options"
+                  ></div>
+                </div>
+              </div>
+            </label>
+            <label>
+              Select VIP Lounge/Room Number:
+              <div class="time-picker" id="venue-name-picker">
+                <input type="hidden" id="venue-name" name="venueName" required />
+                <button
+                  class="time-picker__trigger"
+                  id="venue-name-trigger"
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                >
+                  <span id="venue-name-label">Select a VIP Lounge or Room</span>
+                </button>
+                <div class="time-picker__menu" id="venue-name-menu" hidden>
+                  <div
+                    class="time-picker__options"
+                    id="venue-name-options"
+                    role="listbox"
+                    aria-label="Venue options"
+                  ></div>
+                </div>
+              </div>
+            </label>
+            <label>
+              Name:
+              <input type="text" name="name" placeholder="Juan Dela Cruz" required />
+            </label>
+            <label>
+              Email:
+              <input type="email" name="email" placeholder="juan@example.com" required />
+            </label>
+            <label>
+              Phone:
+              <input type="tel" name="phone" placeholder="0917 123 4567" required />
+            </label>
+            <label>
+              Date:
+              <input type="date" name="date" required />
+            </label>
+            <label id="reservation-single-time-field">
+              Scheduled Time:
+              <div class="time-picker" id="reservation-time-picker">
+                <input type="hidden" id="reservation-time" name="time" />
+                <button
+                  class="time-picker__trigger"
+                  id="reservation-time-trigger"
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                >
+                  <span id="reservation-time-label">Select scheduled time</span>
+                </button>
+                <div class="time-picker__menu" id="reservation-time-menu" hidden>
+                  <div
+                    class="time-picker__options"
+                    id="reservation-time-options"
+                    role="listbox"
+                    aria-label="Reservation time options"
+                  ></div>
+                </div>
+              </div>
+            </label>
+            <label id="reservation-start-time-field" hidden>
+              Start Time:
+              <div class="time-picker" id="reservation-start-time-picker">
+                <input type="hidden" id="reservation-start-time" name="startTime" />
+                <button
+                  class="time-picker__trigger"
+                  id="reservation-start-time-trigger"
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                >
+                  <span id="reservation-start-time-label">Select start time</span>
+                </button>
+                <div class="time-picker__menu" id="reservation-start-time-menu" hidden>
+                  <div
+                    class="time-picker__options"
+                    id="reservation-start-time-options"
+                    role="listbox"
+                    aria-label="Reservation start time options"
+                  ></div>
+                </div>
+              </div>
+            </label>
+            <label id="reservation-end-time-field" hidden>
+              End Time:
+              <div class="time-picker" id="reservation-end-time-picker">
+                <input type="hidden" id="reservation-end-time" name="endTime" />
+                <button
+                  class="time-picker__trigger"
+                  id="reservation-end-time-trigger"
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                >
+                  <span id="reservation-end-time-label">Select end time</span>
+                </button>
+                <div class="time-picker__menu" id="reservation-end-time-menu" hidden>
+                  <div
+                    class="time-picker__options"
+                    id="reservation-end-time-options"
+                    role="listbox"
+                    aria-label="Reservation end time options"
+                  ></div>
+                </div>
+              </div>
+            </label>
+            <label>
+              Number of Guests:
+              <input type="number" name="guests" min="1" max="20" required />
+            </label>
+            <button
+              class="button button--primary reservation-form__button"
+              id="reservation-submit-button"
+              type="submit"
+            >
+              Read and Accept the Terms and Condition to Continue.
+            </button>
+            <p class="reservation-form__message" id="reservation-message">
+            </p>
+          </form>
+        </section>
+
+        <section class="section-card contact-section" id="contact">
+          <div class="section-copy">
+            <h2>Contact Us</h2>
+          </div>
+          <div class="contact-layout">
+            <div class="contact-list">
+              <article class="contact-card">
+                <h3>Address</h3>
+                <p>Brgy. San Vicente, Centro Pacita, Pacita Complex, San Pedro, Philippines</p>
+              </article>
+              <article class="contact-card">
+                <h3>Phone</h3>
+                <p>0917 134 7662</p>
+              </article>
+              <article class="contact-card">
+                <h3>Email</h3>
+                <p>chophouserestaurant@yahoo.com</p>
+              </article>
+            </div>
+            <aside class="social-card">
+              <h3>Follow Us</h3>
+              <div class="social-links" aria-label="Social media links">
+                <a href="https://www.facebook.com/chophouserestobarxcafe" aria-label="Facebook">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path
+                      d="M13.5 21v-8.1h2.7l.4-3.2h-3.1V7.66c0-.93.26-1.56 1.59-1.56H16.6V3.24c-.27-.04-1.2-.12-2.29-.12-2.26 0-3.81 1.38-3.81 3.91v2.18H7.95v3.2h2.55V21h3z"
+                    />
+                  </svg>
+                </a>
+                <a href="https://www.instagram.com/chophouserestobarxcafe/" aria-label="Instagram">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path
+                      d="M7.75 3h8.5A4.75 4.75 0 0 1 21 7.75v8.5A4.75 4.75 0 0 1 16.25 21h-8.5A4.75 4.75 0 0 1 3 16.25v-8.5A4.75 4.75 0 0 1 7.75 3zm0 1.8A2.95 2.95 0 0 0 4.8 7.75v8.5a2.95 2.95 0 0 0 2.95 2.95h8.5a2.95 2.95 0 0 0 2.95-2.95v-8.5a2.95 2.95 0 0 0-2.95-2.95h-8.5zm8.9 1.35a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7.2A4.8 4.8 0 1 1 7.2 12 4.8 4.8 0 0 1 12 7.2zm0 1.8A3 3 0 1 0 15 12a3 3 0 0 0-3-3z"
+                    />
+                  </svg>
+                </a>
+                <a href="https://www.tiktok.com/@chopchics" aria-label="TikTok">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path
+                      d="M14.6 3c.24 2.02 1.38 3.84 3.13 4.85A6.5 6.5 0 0 0 21 8.7v2.84a9.3 9.3 0 0 1-3.65-.9v5.55a5.97 5.97 0 1 1-5.97-5.97c.34 0 .67.03 1 .09v2.9a3.3 3.3 0 0 0-1-.16 3.14 3.14 0 1 0 2.98 4.23V3h2.24z"
+                    />
+                  </svg>
+                </a>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+      </main>
+
+      <footer class="site-footer">
+        <p>&copy; 2026 Chop House Resto Bar. All rights reserved.</p>
+      </footer>
+    </div>
+
+    <div class="modal-backdrop" id="reservation-terms-modal" hidden>
+      <div
+        class="modal-card modal-card--terms"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reservation-terms-modal-title"
+      >
+        <div class="modal-card__header">
+          <div>
+            <p class="section-pill">Reservation Policy</p>
+            <h2 id="reservation-terms-modal-title">Terms and Conditions</h2>
+          </div>
+          <button class="modal-close" id="close-reservation-terms" type="button" aria-label="Close terms modal">
+            X
+          </button>
+        </div>
+
+        <p class="terms-modal__intro">
+          Please review these terms before entering your reservation details.
+        </p>
+
+        <div class="terms-modal__content" id="reservation-terms-content" tabindex="0">
+          <h3>Reservation Policy and Terms and Conditions</h3>
+          <p>
+            In addition to the KTV room packages, Chop House Resto Bar x Cafe follows reservation
+            policies regarding down payment, cancellation, refund, rescheduling, and customer
+            responsibilities.
+          </p>
+          <h3>Reservation Requirements</h3>
+          <p>
+            Customers are required to provide accurate reservation details, valid ID, and proof of
+            payment before their reservation can be approved by the staff or admin.
+          </p>
+          <h3>Down Payment Policy</h3>
+          <p>
+            The establishment follows a down payment policy where the PHP 1,000 reservation fee is
+            non-refundable, while the PHP 3,000 reservation fee is refundable upon verification and
+            approval by the management or authorized staff.
+          </p>
+          <h3>Cancellation and Rescheduling</h3>
+          <p>
+            Customers who wish to cancel or change their reservation must inform the establishment
+            at least 1 day before the scheduled reservation time. Change of date is allowed depending on the
+            availability of the selected KTV room or VIP lounge.
+          </p>
+          <h3>Approval and No-Show Policy</h3>
+          <p>
+            Rescheduling, cancellation, and refund requests are still subject to staff or admin
+            approval. If a customer fails to arrive or does not notify the establishment, the
+            reservation may be marked as cancelled or no-show, and the room or lounge may be made
+            available to other customers.
+          </p>
+          <h3>House Rules</h3>
+          <p>
+            The establishment prohibits outside food and drinks inside the KTV room and VIP lounges.
+            By submitting a reservation, customers agree to follow the cancellation, refund,
+            rescheduling, and house rules of Chop House Resto Bar x Cafe.
+          </p>
+        </div>
+
+        <p class="terms-modal__hint" id="reservation-terms-hint">
+          Scroll to the end of the terms to enable the confirmation checkbox.
+        </p>
+
+        <label class="terms-modal__confirm">
+          <input type="checkbox" id="reservation-terms-modal-check" disabled />
+          <span>I have read and agree to the reservation Terms and Conditions.</span>
+        </label>
+
+        <div class="modal-card__footer">
+          <button class="button button--secondary" id="cancel-reservation-terms" type="button">
+            Cancel
+          </button>
+          <button class="button button--primary" id="accept-reservation-terms" type="button" disabled>
+            Accept Terms
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="downpayment-modal" hidden>
+      <div
+        class="modal-card modal-card--downpayment"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="downpayment-modal-title"
+      >
+        <div class="modal-card__header">
+          <div>
+            <p class="section-pill">Required Downpayment</p>
+            <h2 id="downpayment-modal-title">Block your reservation</h2>
+          </div>
+          <button class="modal-close" id="close-downpayment-modal" type="button" aria-label="Close downpayment modal">
+            X
+          </button>
+        </div>
+
+        <p class="downpayment-summary" id="downpayment-summary">
+          A downpayment is required before this reservation request can be submitted.
+        </p>
+
+        <form class="downpayment-form" id="downpayment-form">
+          <div class="downpayment-amount">
+            <span>Required Downpayment</span>
+            <strong id="downpayment-amount-label">PHP 500.00</strong>
+          </div>
+
+          <div class="gcash-payment-card">
+            <div>
+              <span>Payment Method</span>
+              <strong>GCash</strong>
+            </div>
+            <img
+              id="gcash-qr-preview"
+              src="assets/gcash-qr-sample.svg"
+              alt="GCash QR code for downpayment"
+            />
+          </div>
+          <input type="hidden" id="downpayment-method" value="GCash" />
+
+          <label>
+            Receipt Upload
+            <input
+              type="file"
+              id="downpayment-receipt"
+              accept="image/png,image/jpeg,image/webp,application/pdf"
+              required
+            />
+          </label>
+
+          <label>
+            ID Verification Upload
+            <input
+              type="file"
+              id="id-verification"
+              accept="image/png,image/jpeg,image/webp,application/pdf"
+              required
+            />
+          </label>
+
+          <label class="downpayment-confirm">
+            <input type="checkbox" id="downpayment-confirm" required />
+            <span>I confirm that the downpayment has been sent.</span>
+          </label>
+
+          <p class="reservation-form__message" id="downpayment-message"></p>
+
+          <div class="modal-card__footer">
+            <button class="button button--secondary" id="cancel-downpayment-modal" type="button">
+              Back
+            </button>
+            <button class="button button--primary" id="submit-downpayment-button" type="submit">
+              Submit Reservation
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="api.js?v=20260828-ops-export"></script>
+    <script src="app.js?v=20260828-ops-export"></script>
+  </body>
+</html>

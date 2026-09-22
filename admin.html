@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChopHouse | Admin Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css?v=20260828-count-wording" />
+  </head>
+  <body data-role-page="admin">
+    <div class="dashboard-shell">
+      <main class="dashboard-main">
+        <section class="dashboard-hero dashboard-hero--admin">
+          <div class="dashboard-hero__top">
+            <span class="section-pill">Administrator Access</span>
+            <button class="dashboard-logout" id="logout-button" type="button">Log Out</button>
+          </div>
+          <h1>Admin dashboard</h1>
+          <p class="dashboard-hero__copy">
+            Manage the full reservation flow, room availability controls, and staff operations from
+            one place.
+          </p>
+
+          <div class="hero-status">
+            <article class="hero-status__card">
+              <span class="hero-status__label">Signed in as</span>
+              <strong id="dashboard-user">Admin@gmail.com</strong>
+            </article>
+            <article class="hero-status__card">
+              <span class="hero-status__label">Current role</span>
+              <strong>Administrator</strong>
+            </article>
+            <article class="hero-status__card">
+              <span class="hero-status__label">System scope</span>
+              <strong>Full management access</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="manager-card booking-oversight-card">
+          <div class="manager-card__header manager-card__header--actions">
+            <div>
+              <h2>Booking oversight</h2>
+              <p>Review customer requests from the website and manage daily reservation operations.</p>
+            </div>
+            <div class="booking-oversight-actions">
+              <button class="button button--ghost button--inline" id="open-archive-modal" type="button">
+                Logs
+              </button>
+              <button class="button button--ghost button--inline" id="export-reservations-csv" type="button">
+                Export CSV
+              </button>
+              <button class="button button--ghost button--inline" id="export-reservations-pdf" type="button">
+                Export PDF
+              </button>
+              <button class="button button--staff-inline" id="open-new-reservation-modal" type="button">
+                Add Manual Reservation
+              </button>
+            </div>
+          </div>
+
+          <div class="booking-summary">
+            <article class="booking-summary__card">
+              <span class="booking-summary__label">Open Bookings</span>
+              <strong class="booking-summary__value" id="reservation-total-count">0</strong>
+            </article>
+            <article class="booking-summary__card booking-summary__card--pending">
+              <span class="booking-summary__label">Pending</span>
+              <strong class="booking-summary__value" id="reservation-pending-count">0</strong>
+            </article>
+            <article class="booking-summary__card booking-summary__card--approved">
+              <span class="booking-summary__label">Active</span>
+              <strong class="booking-summary__value" id="reservation-approved-count">0</strong>
+            </article>
+            <article class="booking-summary__card booking-summary__card--cancelled">
+              <span class="booking-summary__label">Closed</span>
+              <strong class="booking-summary__value" id="reservation-cancelled-count">0</strong>
+            </article>
+          </div>
+
+          <section class="reservation-calendar" aria-labelledby="reservation-calendar-heading">
+            <div class="reservation-calendar__header">
+              <div>
+                <h3 id="reservation-calendar-heading">Reservation calendar</h3>
+                <p>Daily timeline for pending, approved, late, and checked-in bookings.</p>
+              </div>
+              <label class="reservation-calendar__date">
+                Date
+                <input type="date" id="reservation-calendar-date" />
+              </label>
+            </div>
+            <div class="reservation-calendar__summary" id="reservation-calendar-summary">
+              Select a date to view the reservation timeline.
+            </div>
+            <div class="reservation-calendar__list" id="reservation-calendar-list"></div>
+          </section>
+
+          <p class="admin-form__message booking-message" id="booking-message">
+            Pending requests appear below. Active bookings are stored in Reserved and in-service bookings.
+          </p>
+
+          <div class="reservation-list" id="reservation-list"></div>
+        </section>
+
+        <section class="management-layout">
+          <article class="manager-card">
+            <div class="manager-card__header manager-card__header--actions">
+              <div>
+                <h2>All VIP lounges and rooms</h2>
+                <p>Review the current admin-managed inventory for reservations and operations.</p>
+              </div>
+              <button
+                class="button button--ghost button--inline button--inventory-trigger"
+                id="open-inventory-actions-modal"
+                type="button"
+              >
+                Update
+              </button>
+            </div>
+
+            <p class="admin-form__message inventory-message" id="inventory-message">
+              Use Update to edit, add, or delete VIP lounges and rooms from the current inventory.
+            </p>
+
+            <div class="inventory-columns">
+              <section class="inventory-section" aria-labelledby="tables-heading">
+                <div class="inventory-section__header">
+                  <h3 id="tables-heading">VIP Lounges</h3>
+                  <span class="inventory-count" id="table-count">0</span>
+                </div>
+                <div class="inventory-list" id="table-list"></div>
+              </section>
+
+              <section class="inventory-section" aria-labelledby="rooms-heading">
+                <div class="inventory-section__header">
+                  <h3 id="rooms-heading">KTV Rooms</h3>
+                  <span class="inventory-count inventory-count--staff" id="room-count">0</span>
+                </div>
+                <div class="inventory-list" id="room-list"></div>
+              </section>
+            </div>
+
+            <section class="accounts-section" aria-labelledby="accounts-heading">
+              <div class="inventory-section__header">
+                <div>
+                  <h3 id="accounts-heading">Accounts</h3>
+                  <p>All staff and administrator accounts currently in the system.</p>
+                </div>
+                <span class="inventory-count" id="account-count">0</span>
+              </div>
+              <p class="admin-form__message accounts-message" id="accounts-message">
+                Account records appear here for review.
+              </p>
+              <div class="accounts-list" id="accounts-list"></div>
+            </section>
+
+            <section class="accounts-section" aria-labelledby="payment-settings-heading">
+              <div class="inventory-section__header">
+                <div>
+                  <h3 id="payment-settings-heading">GCash Downpayment QR</h3>
+                  <p>Upload the QR code customers will scan in the required downpayment modal.</p>
+                </div>
+              </div>
+              <p class="admin-form__message accounts-message" id="payment-settings-message">
+                Current GCash QR appears below.
+              </p>
+              <form class="payment-settings-form" id="payment-settings-form">
+                <img
+                  class="payment-settings-form__preview"
+                  id="admin-gcash-qr-preview"
+                  src="assets/gcash-qr-sample.svg"
+                  alt="Current GCash QR code"
+                />
+                <label>
+                  Upload New QR
+                  <input
+                    type="file"
+                    id="admin-gcash-qr-file"
+                    accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                    required
+                  />
+                </label>
+                <button class="button button--admin" type="submit">
+                  Save QR
+                </button>
+              </form>
+            </section>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="reservation-modal" hidden>
+      <div
+        class="modal-card modal-card--wide"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reservation-modal-title"
+      >
+        <div class="modal-card__header">
+          <div>
+            <p class="module-card__eyebrow" id="reservation-modal-eyebrow">Booking Oversight</p>
+            <h2 id="reservation-modal-title">Adjust reservation</h2>
+          </div>
+          <button
+            class="modal-close"
+            id="close-reservation-modal"
+            type="button"
+            aria-label="Close reservation modal"
+          >
+            X
+          </button>
+        </div>
+
+        <form class="admin-form" id="reservation-adjust-form">
+          <div class="form-grid form-grid--split">
+            <label>
+              Customer Name
+              <input type="text" id="reservation-customer-name" required />
+            </label>
+
+            <label>
+              Email
+              <input type="email" id="reservation-customer-email" required />
+            </label>
+
+            <label>
+              Phone
+              <input type="tel" id="reservation-customer-phone" required />
+            </label>
+
+            <label>
+              Number of Guests
+              <input type="number" id="reservation-guests" min="1" max="20" required />
+            </label>
+
+            <label>
+              Date
+              <input type="date" id="reservation-date" required />
+            </label>
+
+            <label id="reservation-single-time-group">
+              Scheduled Time
+              <input type="time" id="reservation-time" required />
+            </label>
+
+            <label id="reservation-start-time-group" hidden>
+              Start Time
+              <input type="time" id="reservation-start-time" />
+            </label>
+
+            <label id="reservation-end-time-group" hidden>
+              End Time
+              <input type="time" id="reservation-end-time" />
+            </label>
+
+            <label>
+              Venue Type
+              <select id="reservation-venue-type" required>
+                <option value="table">VIP Lounge</option>
+                <option value="room">KTV Room</option>
+              </select>
+            </label>
+
+            <label>
+              VIP Lounge / Room
+              <select id="reservation-venue-name" required>
+                <option value="">Choose a VIP lounge or room</option>
+              </select>
+            </label>
+
+            <label>
+              Status
+              <select id="reservation-status-field" required>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="late">Late</option>
+                <option value="checked_in">Checked In</option>
+                <option value="checked_out">Checked Out</option>
+                <option value="no_show">No Show</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="admin-form__message" id="reservation-modal-message">
+            Update reservation details before saving your changes.
+          </p>
+
+          <div class="modal-card__footer">
+            <button class="button button--ghost" id="cancel-reservation-modal" type="button">
+              Cancel
+            </button>
+            <button class="button button--admin" id="reservation-save-button" type="submit">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="pending-reservation-modal" hidden>
+      <div
+        class="modal-card modal-card--wide modal-card--fixed modal-card--pending-reservation"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pending-reservation-modal-title"
+      >
+        <div class="modal-card__header">
+          <div>
+            <p class="module-card__eyebrow">Pending Request</p>
+            <h2 id="pending-reservation-modal-title">Reservation details</h2>
+          </div>
+          <button class="modal-close" id="close-pending-reservation-modal" type="button" aria-label="Close pending reservation modal">
+            X
+          </button>
+        </div>
+
+        <p class="admin-form__message archive-message" id="pending-reservation-message">
+          Select a pending request to review its full details.
+        </p>
+
+        <div class="pending-reservation-detail" id="pending-reservation-detail"></div>
+
+        <div class="modal-card__footer">
+          <button class="button button--ghost" id="cancel-pending-reservation-modal" type="button">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="active-reservations-modal" hidden>
+      <div
+        class="modal-card modal-card--wide modal-card--fixed modal-card--active-reservations"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="active-reservations-modal-title"
+      >
+        <div class="modal-card__header">
+          <div>
+            <p class="module-card__eyebrow">Booking Oversight</p>
+            <h2 id="active-reservations-modal-title">Reserved and in-service bookings</h2>
+          </div>
+          <button class="modal-close" id="close-active-reservations-modal" type="button" aria-label="Close reserved bookings modal">
+            X
+          </button>
+        </div>
+
+        <p class="admin-form__message archive-message" id="active-reservations-message">
+          Current reserved and checked-in bookings are stored here.
+        </p>
+
+        <div class="active-reservation-list" id="active-reservation-list"></div>
+
+        <div class="modal-card__footer">
+          <button class="button button--ghost" id="cancel-active-reservations-modal" type="button">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="archive-modal" hidden>
+      <div
+        class="modal-card modal-card--wide modal-card--fixed modal-card--archive"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="archive-modal-title"
+      >
+        <div class="modal-card__header">
+          <div>
+            <p class="module-card__eyebrow">Booking Oversight</p>
+            <h2 id="archive-modal-title">Reservation logs</h2>
+          </div>
+          <button class="modal-close" id="close-archive-modal" type="button" aria-label="Close logs modal">
+            X
+          </button>
+        </div>
+
+        <p class="admin-form__message archive-message" id="archive-message">
+          Reservation records and activity history are stored here for review.
+        </p>
+
+        <div class="archive-table-wrap" id="archive-list"></div>
+
+        <div class="modal-card__footer">
+          <button class="button button--ghost" id="cancel-archive-modal" type="button">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="inventory-modal" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="inventory-modal-title">
+        <div class="modal-card__header">
+          <div>
+            <h2 id="inventory-modal-title">Add VIP lounge or room</h2>
+          </div>
+          <button class="modal-close" id="close-inventory-modal" type="button" aria-label="Close modal">
+            X
+          </button>
+        </div>
+
+        <form class="admin-form" id="inventory-form">
+          <div class="form-grid">
+            <label>
+              Type
+              <select id="inventory-type" required>
+                <option value="table">VIP Lounge</option>
+                <option value="room">KTV Room</option>
+              </select>
+            </label>
+
+            <label>
+              Name
+              <input
+                type="text"
+                id="inventory-name"
+                placeholder="VIP Lounge 6 or KTV Room 4"
+                required
+              />
+            </label>
+
+            <label>
+              Capacity
+              <input
+                type="text"
+                id="inventory-capacity"
+                placeholder="2-4 people"
+                required
+              />
+            </label>
+
+            <label>
+              Notes
+              <input
+                type="text"
+                id="inventory-notes"
+                placeholder="Window side, VIP, large group, etc."
+              />
+            </label>
+          </div>
+
+          <div class="modal-card__footer">
+            <button class="button button--ghost" id="cancel-inventory-modal" type="button">
+              Cancel
+            </button>
+            <button class="button button--admin" type="submit">Save Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="inventory-actions-modal" hidden>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="inventory-actions-modal-title"
+      >
+        <div class="modal-card__header">
+          <div>
+            <h2 id="inventory-actions-modal-title">Update VIP lounges and rooms</h2>
+          </div>
+          <button
+            class="modal-close"
+            id="close-inventory-actions-modal"
+            type="button"
+            aria-label="Close inventory actions modal"
+          >
+            X
+          </button>
+        </div>
+
+        <div class="inventory-action-grid">
+          <button class="button button--ghost inventory-action-button" id="inventory-action-edit" type="button">
+            Edit VIP lounge or room information
+          </button>
+          <button class="button button--admin inventory-action-button" id="inventory-action-add" type="button">
+            Add VIP lounge or room
+          </button>
+          <button
+            class="button button--danger inventory-action-button"
+            id="inventory-action-delete"
+            type="button"
+          >
+            Delete VIP lounge or room
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="edit-modal" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+        <div class="modal-card__header">
+          <div>
+            <h2 id="edit-modal-title">Edit VIP lounge or room</h2>
+          </div>
+          <button class="modal-close" id="close-edit-modal" type="button" aria-label="Close edit modal">
+            X
+          </button>
+        </div>
+
+        <form class="admin-form" id="edit-form">
+          <div class="form-grid">
+            <label>
+              Type
+              <select id="edit-type" required>
+                <option value="table">VIP Lounge</option>
+                <option value="room">KTV Room</option>
+              </select>
+            </label>
+
+            <label>
+              Select item
+              <select id="edit-item" required>
+                <option value="">Choose a VIP lounge or room</option>
+              </select>
+            </label>
+
+            <label>
+              Name
+              <input type="text" id="edit-name" placeholder="VIP Lounge 6 or KTV Room 4" required />
+            </label>
+
+            <label>
+              Capacity
+              <input type="text" id="edit-capacity" placeholder="2-4 people" required />
+            </label>
+
+            <label>
+              Notes
+              <input type="text" id="edit-notes" placeholder="Window side, VIP, large group, etc." />
+            </label>
+          </div>
+
+          <p class="admin-form__message" id="edit-form-message">
+            Update the VIP lounge or room details before saving your changes.
+          </p>
+
+          <div class="modal-card__footer">
+            <button class="button button--ghost" id="cancel-edit-modal" type="button">
+              Cancel
+            </button>
+            <button class="button button--admin" type="submit">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="delete-modal" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+        <div class="modal-card__header">
+          <div>
+            <h2 id="delete-modal-title">Delete VIP lounge or room</h2>
+          </div>
+          <button class="modal-close" id="close-delete-modal" type="button" aria-label="Close delete modal">
+            X
+          </button>
+        </div>
+
+        <form class="admin-form" id="delete-form">
+          <div class="form-grid">
+            <label>
+              Type
+              <select id="delete-type" required>
+                <option value="table">VIP Lounge</option>
+                <option value="room">KTV Room</option>
+              </select>
+            </label>
+
+            <label>
+              Select item
+              <select id="delete-item" required>
+                <option value="">Choose a VIP lounge or room</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="modal-card__footer">
+            <button class="button button--ghost" id="cancel-delete-modal" type="button">
+              Cancel
+            </button>
+            <button class="button button--danger" type="submit">Delete Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="sensor-modal" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="sensor-modal-title">
+        <div class="modal-card__header">
+          <div>
+            <p class="module-card__eyebrow">Sensor Manager</p>
+            <h2 id="sensor-modal-title">Add sensor</h2>
+          </div>
+          <button class="modal-close" id="close-sensor-modal" type="button" aria-label="Close sensor modal">
+            X
+          </button>
+        </div>
+
+        <form class="admin-form" id="sensor-form">
+          <input type="hidden" id="sensor-venue-id" />
+          <div class="form-grid">
+            <label>
+              Linked VIP Lounge / Room
+              <input type="text" id="sensor-venue-name" readonly />
+            </label>
+
+            <label>
+              Sensor ID
+              <input type="text" id="sensor-id" placeholder="vip-lounge-1-sensor" required />
+            </label>
+
+            <label>
+              Sensor Label
+              <input type="text" id="sensor-label" placeholder="VIP Lounge 1 Sensor" required />
+            </label>
+
+            <label>
+              Sensor Location
+              <input type="text" id="sensor-location" placeholder="Main dining area" required />
+            </label>
+          </div>
+
+          <p class="admin-form__message" id="sensor-form-message">
+            Enter the Sensor ID that will report occupancy for this venue.
+          </p>
+
+          <div class="modal-card__footer">
+            <button class="button button--ghost" id="cancel-sensor-modal" type="button">
+              Cancel
+            </button>
+            <button class="button button--admin" type="submit">Save Sensor</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="api.js?v=20260828-ops-export"></script>
+    <script src="dashboard.js?v=20260828-count-wording"></script>
+  </body>
+</html>

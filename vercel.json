@@ -1,0 +1,69 @@
+{
+  "functions": {
+    "api/accounts/*.php": {
+      "runtime": "vercel-php@0.7.4",
+      "maxDuration": 30
+    },
+    "api/auth/*.php": {
+      "runtime": "vercel-php@0.7.4",
+      "maxDuration": 30
+    },
+    "api/payment-settings/*.php": {
+      "runtime": "vercel-php@0.7.4",
+      "maxDuration": 30
+    },
+    "api/reservations/*.php": {
+      "runtime": "vercel-php@0.7.4",
+      "maxDuration": 30
+    },
+    "api/status/*.php": {
+      "runtime": "vercel-php@0.7.4",
+      "maxDuration": 30
+    },
+    "api/uploads/*.php": {
+      "runtime": "vercel-php@0.7.4",
+      "maxDuration": 30
+    },
+    "api/venues/*.php": {
+      "runtime": "vercel-php@0.7.4",
+      "maxDuration": 30
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/uploads/([^/]+)",
+      "dest": "/api/uploads/index.php?key=$1"
+    },
+    {
+      "src": "/api/accounts/?",
+      "dest": "/api/accounts/index.php"
+    },
+    {
+      "src": "/api/payment-settings/?",
+      "dest": "/api/payment-settings/index.php"
+    },
+    {
+      "src": "/api/reservations/?",
+      "dest": "/api/reservations/index.php"
+    },
+    {
+      "src": "/api/status/?",
+      "dest": "/api/status/index.php"
+    },
+    {
+      "src": "/api/venues/?",
+      "dest": "/api/venues/index.php"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}

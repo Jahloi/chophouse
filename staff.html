@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChopHouse | Staff Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css?v=20260828-count-wording" />
+  </head>
+  <body data-role-page="staff">
+    <div class="dashboard-shell">
+      <main class="dashboard-main">
+        <section class="dashboard-hero dashboard-hero--staff">
+          <div class="dashboard-hero__top">
+            <span class="section-pill">Staff Access</span>
+            <button class="dashboard-logout" id="logout-button" type="button">Log Out</button>
+          </div>
+          <h1>Staff dashboard</h1>
+          <p class="dashboard-hero__copy">
+            Handle guest arrivals, confirm reservations, and monitor live room activity during the
+            shift.
+          </p>
+
+          <div class="hero-status">
+            <article class="hero-status__card">
+              <span class="hero-status__label">Signed in as</span>
+              <strong id="dashboard-user">Staff@gmail.com</strong>
+            </article>
+            <article class="hero-status__card">
+              <span class="hero-status__label">Current role</span>
+              <strong>Staff</strong>
+            </article>
+            <article class="hero-status__card">
+              <span class="hero-status__label">System scope</span>
+              <strong>Frontline operations</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="manager-card booking-oversight-card">
+          <div class="manager-card__header manager-card__header--actions">
+            <div>
+              <h2>Booking oversight</h2>
+              <p>Review customer requests from the website and manage daily reservation operations.</p>
+            </div>
+            <div class="booking-oversight-actions">
+              <button class="button button--ghost button--inline" id="open-archive-modal" type="button">
+                Logs
+              </button>
+              <button class="button button--ghost button--inline" id="export-reservations-csv" type="button">
+                Export CSV
+              </button>
+              <button class="button button--ghost button--inline" id="export-reservations-pdf" type="button">
+                Export PDF
+              </button>
+              <button class="button button--staff-inline" id="open-new-reservation-modal" type="button">
+                Add Manual Reservation
+              </button>
+            </div>
+          </div>
+
+          <div class="booking-summary">
+            <article class="booking-summary__card">
+              <span class="booking-summary__label">Open Bookings</span>
+              <strong class="booking-summary__value" id="reservation-total-count">0</strong>
+            </article>
+            <article class="booking-summary__card booking-summary__card--pending">
+              <span class="booking-summary__label">Pending</span>
+              <strong class="booking-summary__value" id="reservation-pending-count">0</strong>
+            </article>
+            <article class="booking-summary__card booking-summary__card--approved">
+              <span class="booking-summary__label">Active</span>
+              <strong class="booking-summary__value" id="reservation-approved-count">0</strong>
+            </article>
+            <article class="booking-summary__card booking-summary__card--cancelled">
+              <span class="booking-summary__label">Closed</span>
+              <strong class="booking-summary__value" id="reservation-cancelled-count">0</strong>
+            </article>
+          </div>
+
+          <section class="reservation-calendar" aria-labelledby="reservation-calendar-heading">
+            <div class="reservation-calendar__header">
+              <div>
+                <h3 id="reservation-calendar-heading">Reservation calendar</h3>
+                <p>Daily timeline for pending, approved, late, and checked-in bookings.</p>
+              </div>
+              <label class="reservation-calendar__date">
+                Date
+                <input type="date" id="reservation-calendar-date" />
+              </label>
+            </div>
+            <div class="reservation-calendar__summary" id="reservation-calendar-summary">
+              Select a date to view the reservation timeline.
+            </div>
+            <div class="reservation-calendar__list" id="reservation-calendar-list"></div>
+          </section>
+
+          <p class="admin-form__message booking-message" id="booking-message">
+            Pending requests appear below. Active bookings are stored in Reserved and in-service bookings.
+          </p>
+
+          <div class="reservation-list" id="reservation-list"></div>
+        </section>
+
+        <section class="management-layout">
+          <article class="manager-card">
+            <div class="manager-card__header manager-card__header--actions">
+              <div>
+                <h2>All VIP lounges and rooms</h2>
+                <p>Review the current admin-managed inventory for reservations and operations.</p>
+              </div>
+            </div>
+
+            <p class="admin-form__message inventory-message" id="inventory-message">
+              Current VIP lounge and room inventory appears here for reservation review.
+            </p>
+
+            <div class="inventory-columns">
+              <section class="inventory-section" aria-labelledby="tables-heading">
+                <div class="inventory-section__header">
+                  <h3 id="tables-heading">VIP Lounges</h3>
+                  <span class="inventory-count" id="table-count">0</span>
+                </div>
+                <div class="inventory-list" id="table-list"></div>
+              </section>
+
+              <section class="inventory-section" aria-labelledby="rooms-heading">
+                <div class="inventory-section__header">
+                  <h3 id="rooms-heading">KTV Rooms</h3>
+                  <span class="inventory-count inventory-count--staff" id="room-count">0</span>
+                </div>
+                <div class="inventory-list" id="room-list"></div>
+              </section>
+            </div>
+          </article>
+        </section>
+
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="reservation-modal" hidden>
+      <div
+        class="modal-card modal-card--wide"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reservation-modal-title"
+      >
+        <div class="modal-card__header">
+          <div>
+            <p class="module-card__eyebrow" id="reservation-modal-eyebrow">Booking Oversight</p>
+            <h2 id="reservation-modal-title">Adjust reservation</h2>
+          </div>
+          <button
+            class="modal-close"
+            id="close-reservation-modal"
+            type="button"
+            aria-label="Close reservation modal"
+          >
+            X
+          </button>
+        </div>
+
+        <form class="admin-form" id="reservation-adjust-form">
+          <div class="form-grid form-grid--split">
+            <label>
+              Customer Name
+              <input type="text" id="reservation-customer-name" required />
+            </label>
+
+            <label>
+              Email
+              <input type="email" id="reservation-customer-email" required />
+            </label>
+
+            <label>
+              Phone
+              <input type="tel" id="reservation-customer-phone" required />
+            </label>
+
+            <label>
+              Number of Guests
+              <input type="number" id="reservation-guests" min="1" max="20" required />
+            </label>
+
+            <label>
+              Date
+              <input type="date" id="reservation-date" required />
+            </label>
+
+            <label id="reservation-single-time-group">
+              Scheduled Time
+              <input type="time" id="reservation-time" required />
+            </label>
+
+            <label id="reservation-start-time-group" hidden>
+              Start Time
+              <input type="time" id="reservation-start-time" />
+            </label>
+
+            <label id="reservation-end-time-group" hidden>
+              End Time
+              <input type="time" id="reservation-end-time" />
+            </label>
+
+            <label>
+              Venue Type
+              <select id="reservation-venue-type" required>
+                <option value="table">VIP Lounge</option>
+                <option value="room">KTV Room</option>
+              </select>
+            </label>
+
+            <label>
+              VIP Lounge / Room
+              <select id="reservation-venue-name" required>
+                <option value="">Choose a VIP lounge or room</option>
+              </select>
+            </label>
+
+            <label>
+              Status
+              <select id="reservation-status-field" required>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="late">Late</option>
+                <option value="checked_in">Checked In</option>
+                <option value="checked_out">Checked Out</option>
+                <option value="no_show">No Show</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="admin-form__message" id="reservation-modal-message">
+            Update reservation details before saving your changes.
+          </p>
+
+          <div class="modal-card__footer">
+            <button class="button button--ghost" id="cancel-reservation-modal" type="button">
+              Cancel
+            </button>
+            <button class="button button--admin" id="reservation-save-button" type="submit">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="pending-reservation-modal" hidden>
+      <div
+        class="modal-card modal-card--wide modal-card--fixed modal-card--pending-reservation"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pending-reservation-modal-title"
+      >
+        <div class="modal-card__header">
+          <div>
+            <p class="module-card__eyebrow">Pending Request</p>
+            <h2 id="pending-reservation-modal-title">Reservation details</h2>
+          </div>
+          <button class="modal-close" id="close-pending-reservation-modal" type="button" aria-label="Close pending reservation modal">
+            X
+          </button>
+        </div>
+
+        <p class="admin-form__message archive-message" id="pending-reservation-message">
+          Select a pending request to review its full details.
+        </p>
+
+        <div class="pending-reservation-detail" id="pending-reservation-detail"></div>
+
+        <div class="modal-card__footer">
+          <button class="button button--ghost" id="cancel-pending-reservation-modal" type="button">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="active-reservations-modal" hidden>
+      <div
+        class="modal-card modal-card--wide modal-card--fixed modal-card--active-reservations"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="active-reservations-modal-title"
+      >
+        <div class="modal-card__header">
+          <div>
+            <p class="module-card__eyebrow">Booking Oversight</p>
+            <h2 id="active-reservations-modal-title">Reserved and in-service bookings</h2>
+          </div>
+          <button class="modal-close" id="close-active-reservations-modal" type="button" aria-label="Close reserved bookings modal">
+            X
+          </button>
+        </div>
+
+        <p class="admin-form__message archive-message" id="active-reservations-message">
+          Current reserved and checked-in bookings are stored here.
+        </p>
+
+        <div class="active-reservation-list" id="active-reservation-list"></div>
+
+        <div class="modal-card__footer">
+          <button class="button button--ghost" id="cancel-active-reservations-modal" type="button">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="archive-modal" hidden>
+      <div
+        class="modal-card modal-card--wide modal-card--fixed modal-card--archive"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="archive-modal-title"
+      >
+        <div class="modal-card__header">
+          <div>
+            <p class="module-card__eyebrow">Booking Oversight</p>
+            <h2 id="archive-modal-title">Reservation logs</h2>
+          </div>
+          <button class="modal-close" id="close-archive-modal" type="button" aria-label="Close logs modal">
+            X
+          </button>
+        </div>
+
+        <p class="admin-form__message archive-message" id="archive-message">
+          Reservation records and activity history are stored here for review.
+        </p>
+
+        <div class="archive-table-wrap" id="archive-list"></div>
+
+        <div class="modal-card__footer">
+          <button class="button button--ghost" id="cancel-archive-modal" type="button">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="api.js?v=20260828-ops-export"></script>
+    <script src="dashboard.js?v=20260828-count-wording"></script>
+  </body>
+</html>

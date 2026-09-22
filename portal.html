@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChopHouse | Staff Portal</title>
+    <link rel="stylesheet" href="portal.css" />
+  </head>
+  <body>
+    <div class="portal-shell">
+      <header class="portal-header">
+        <a class="brand" href="index.html" aria-label="Back to ChopHouse home">
+          <img class="brand__logo" src="assets/chophouse-logo.jpg" alt="ChopHouse logo" />
+          <div>
+            <p class="brand__name">CHOP HOUSE</p>
+            <p class="brand__tag">RESTO BAR X CAFE</p>
+          </div>
+        </a>
+
+        <div class="portal-header__actions">
+          <a class="header-link" href="index.html">Public Website</a>
+          <a class="header-link header-link--accent" href="login.html">Log Out</a>
+        </div>
+      </header>
+
+      <main class="portal-main">
+        <section class="portal-hero">
+          <span class="section-pill">Operations Center</span>
+          <h1>Admin and staff control panel</h1>
+          <p class="portal-hero__copy">
+            Manage reservations, room activity, and service flow from one internal landing page.
+          </p>
+
+          <div class="hero-status">
+            <article class="hero-status__card">
+              <span class="hero-status__label">Signed in as</span>
+              <strong id="portal-user">Staff member</strong>
+            </article>
+            <article class="hero-status__card">
+              <span class="hero-status__label">System mode</span>
+              <strong>Demo portal</strong>
+            </article>
+            <article class="hero-status__card">
+              <span class="hero-status__label">Connected node</span>
+              <strong>KTV Room 1 sensor</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="role-grid" aria-label="Role entry points">
+          <article class="role-card role-card--admin">
+            <div class="role-card__header">
+              <p class="role-card__eyebrow">Administrator</p>
+              <h2>Admin Panel</h2>
+              <span class="role-badge">Full Access</span>
+            </div>
+
+            <p class="role-card__copy">
+              Review reservations, manage VIP lounge/room inventory, monitor availability, and control
+              staff-facing settings.
+            </p>
+
+            <ul class="role-list">
+              <li>Reservation approval and conflict review</li>
+              <li>VIP lounge and room configuration</li>
+              <li>Staff account and schedule management</li>
+            </ul>
+
+            <div class="role-card__footer">
+              <a class="button button--primary" href="#">Open Admin Dashboard</a>
+            </div>
+          </article>
+
+          <article class="role-card role-card--staff">
+            <div class="role-card__header">
+              <p class="role-card__eyebrow">Frontline Team</p>
+              <h2>Staff Panel</h2>
+              <span class="role-badge role-badge--staff">Daily Operations</span>
+            </div>
+
+            <p class="role-card__copy">
+              Handle guest arrivals, view live room status, confirm bookings, and track service
+              activity throughout the shift.
+            </p>
+
+            <ul class="role-list">
+              <li>Check-in and booking verification</li>
+              <li>Live VIP lounge and KTV room monitoring</li>
+              <li>Daily service updates and queue handling</li>
+            </ul>
+
+            <div class="role-card__footer">
+              <a class="button button--secondary" href="#">Open Staff Dashboard</a>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="portal.js"></script>
+  </body>
+</html>
